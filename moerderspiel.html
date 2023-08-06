@@ -82,9 +82,17 @@ Name2 Nachname
         document.getElementById('printable_content').innerHTML = playersHTML;
 
         window.print();
+    }
 
-        document.getElementById('unprintable').style.display = 'block';
-        document.getElementById('printable_content').innerHTML = '';
+    window.onafterprint = function () {
+        var ua = navigator.userAgent.toLowerCase();
+        var isAndroid = ua.indexOf("android") > -1;
+        if (isAndroid) {
+            // TODO: find a way to detect if print dialog was closed and then reset the page
+        } else {
+            document.getElementById('unprintable').style.display = 'block';
+            document.getElementById('printable_content').innerHTML = '';
+        }
     }
 
     document.querySelector('button').addEventListener('click', printPage);
