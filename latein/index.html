@@ -1,0 +1,116 @@
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<script>
+    latin_data = {
+        "a posteriori": "im Nachhinein",
+        "a priori": "von vornherein",
+        "a verbis legis non est recedendum": "von den Worten des Gesetzes ist nicht abzugehen",
+        "ab initio": "von Anfang an",
+        "ab initio nullum semper nullum": "anfangs nichtig, immer nichtig",
+        "ab intestato": "vom Testtamentslosen",
+        "ab urbe condita": "ab Günderung der Stadt",
+        "abberatio ictus": "Abirren des Schlages",
+        "abolitio": "Aufhebung",
+        "abrogatio": "Abschaffung",
+        "absolutio": "Freisprechung",
+        "absolutus sententia iudicis praesumtitur innocens": "wer durch Gerichtsurteil freigesprochen worden ist, gilt als unschuldig",
+        "abusus non tollit usum": "Missbrauch hebt ein Gebrauchsrecht nicht auf",
+        "abusus": "Missbrauch",
+        "acceptilatio": "förmliche Bestätigung der Erfüllung einer Stipulationsschuld"
+    }
+
+    function display_new_exercise() {
+        document.getElementById("content_component").innerHTML = get_new_exercise();
+    }
+
+    function get_new_exercise() {
+        let questions = "";
+        let answers = [];
+
+        // select one random question
+        let keys = Object.keys(latin_data);
+        let random_key = keys[Math.floor(Math.random() * keys.length)];
+        answers.push(latin_data[random_key]);
+
+        // select 3 random answers
+        while (answers.length < 4) {
+            let random_answer = keys[Math.floor(Math.random() * keys.length)];
+            if (!answers.includes(latin_data[random_answer])) {
+                answers.push(latin_data[random_answer]);
+            }
+        }
+
+        // generate questions html
+        for (let i = 0; i < answers.length; i++) {
+            questions += get_radio_element(answers[i]);
+        }
+
+        template = `<h3 class="mb-4 font-extrabold text-gray-900 text-5xl">${random_key}</h3>
+<ul class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+    ${questions}
+</ul>`
+        return template;
+    }
+
+    function get_radio_element(answer) {
+        return `
+<li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+    <div class="flex items-center pl-3">
+        <input id="list-radio-license" type="radio" value="" name="list-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
+        <label for="list-radio-license" class="w-full py-3 ml-2 text-sm font-medium text-gray-900">${answer}</label>
+     </div>
+</li>`
+    }
+
+</script>
+
+<div id="center_component" class="center absolute left-0 top-0 flex h-screen w-screen justify-center bg-blue-500">
+    <div class="center m-auto flex justify-center">
+        <div id="content_component" class="rounded-lg bg-indigo-400 bg-opacity-75 p-10 text-center">
+            <div id="be_right_back_text" class="text-5xl font-extrabold">Test</div>
+            <button class="px-4 py-2 font-semibold text-sm bg-sky-500 text-white rounded-none shadow-sm"
+                    onclick="display_new_exercise()">Start
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-animation {
+        background: radial-gradient(circle, #4285f4, #0f3057);
+        background-size: 200% 200%;
+        animation: be_right_back_backgroundLoop 10s infinite linear;
+    }
+
+    @keyframes be_right_back_backgroundLoop {
+        0% {
+            background-position: 50% 50%;
+            background-color: #4285f4; /* Initial blue color */
+        }
+        50% {
+            background-position: 100% 100%;
+            background-color: #0f3057; /* Darker blue color */
+        }
+        100% {
+            background-position: 50% 50%;
+            background-color: #4285f4; /* Back to initial blue color */
+        }
+    }
+</style>
+
+<script>
+    // Apply the background animation to the component
+    function be_right_back_animateBackground() {
+        const component = document.getElementById('be_right_back');
+        component.classList.add('bg-animation');
+    }
+
+    be_right_back_animateBackground();
+</script>
+</body>
+</html>
