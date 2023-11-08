@@ -57,7 +57,7 @@
         ["actuo quanti minoris", "Minderungslklage"],
         ["actio redhibitoria", "Wandlungsklage"],
         ["actio semel extincta non reviviscit", "eine einmal erloschener Anspruch lebt nicht wieder auf"],
-        ["actio utilis", "verwendbar] brauchbar gemachte Klage"],
+        ["actio utilis", "verwendbar, brauchbar gemachte Klage"],
         ["actio venditi", "Klage des Verkäufers"],
         ["actio", "Handlung(en)/ Klage(n)"],
         ["actiones noxales", "Noxalklage"],
@@ -69,8 +69,78 @@
         ["ad acta", "zu den Akten"],
         ["ad hoc", "zu diesem - diesen Fall betreffend"],
         ["ad infinitum", "bis ins Unendliche"],
-        ["ad libitum", "nach Belieben, beliebig"]
+        ["ad libitum", "nach Belieben, beliebig"],
+        ["ad usum", "zum Gebrauch"],
+        ["addictio", "prätorische Zusage, Zusprechen durch den Prätor"],
+        ["aditio hereditatis", "Erbschaftsantritt/ Erbschaftsannahme"],
+        ["aditio", "Antritt"],
+        ["adiudicatio", "richterlicher Zuspruch durch Urteil"],
+        ["adoptio imitatur naturam", "die Adoption ahmt die Natur nach"],
+        ["adulterium", "Ehebruch"],
+        ["advocatus", "Rechtsbeistand, Rechtsanwalt, Anwalt"],
+        ["aedes", "Gebäude"],
+        ["aequitas", "Billigkeit"],
+        ["aequum est enim ut cuis participativ lucrum participet et damnum", "es ist gerecht, dass derjenige, der den Nutzen (aus etwas) zieht, auch an dem (daraus resultierenden) Schaden beteiligt sein soll"],
+        ["aerarium", "die Staatskasse, das Staatsvermögen"],
+        ["aes alienum", "'fremdes Geld' = Schulden"],
+        ["aestimatio", "Schätzung"],
+        ["aetas", "Lebensalter, Zeitalter"],
+        ["affectus", "Zustand, Leidenschaft, Begierde"],
+        ["agere in fraudem legis", "unter Umgehung des Gesetzes handeln"],
+        ["agnatus proximus", "der nächste Blutsverwandte"],
+        ["alieno facto ius alterius non mutatur", "durch eine fremde Tat wird das Recht eines anderen nicht verändert"],
+        ["alieno nomine", "in fremdem Namen"],
+        ["alius", "etwas anderes"],
+        ["alius m., alia f., aliud n.", "ein anderer, eine andere, etwas anderes"],
+        ["alluvio", "Anschwemmung von Erde, Landanschwemmung durch Flüsse"],
+        ["alma mater", "nährende Mutter"],
+        ["altera pars", "die Gegenpartei - der 'andere Teil'"],
+        ["alteri stipulari nemo potest", "niemand kann sich für einen anderen etwas versprechen lassen"],
+        ["ambiguitas contra stipulatorem", "Zweideutigkeit (wirkt) gegen den Stipulator"],
+        ["ambiguitas", "Zwei-, Mehrdeutigkeit"],
+        ["animus domini", "der Wille, eine Sache als die seine, (als Eigentümer) für sich zu behalten"],
+        ["animus donandi", "Schenkungswille, -absicht"],
+        ["animus negotii alieni gerendi", "Absicht, für einen anderen ein Geschäft zu führen"],
+        ["animus novandi", "Erneurungsabsicht, -wille"],
+        ["animus obligandi", "Verpflichtungswille"],
+        ["animus possidendi", "Besitzwille"],
+        ["animus rem alteri habendi", "der Wille, eine Sache für einen anderen innezuhaben"],
+        ["animus rem sibi hanbendi", "Besitzwille"],
+        ["animus", "Absicht, Wille (der Handelnden)"],
+        ["annus", "Jahr"],
+        ["appellatio", "Berufung"],
+        ["approbatio", "Bestätigung, Billigung"],
+        ["aquae ductur", "das Recht, eine Wasserleitung über ein fremdes Grundstück zu führen (Feldservitut)"],
+        ["arbitrium iudicis", "richterliches Ermessen"],
+        ["arbitrium", "Schiedsspruch"],
+        ["argumenta non sunt numeranda sed ponderanda", "die Gründe sind nicht abzuzählen, sondern zu Gewichten"],
+        ["argumentum a maiori ad minus", "Schlussfolderung vom Größeren auf das Kleine"],
+        ["argumentum a minori ad maius", "Schlussfolderung vom Kleineren auf das Größere"],
+        ["argumentum e contrario", "Umkehrschluss"],
+        ["argumentum", "Beweismittel, Beweisgrund, Merkmal"],
+        ["assignatio", "Anweisung"],
+        ["auctor", "Gewährsmann, Gewährleister, Urheber, Rechtsvorgänger"],
+        ["auctoritas", "Macht, Ansehen, Autorität, Gewähr, Bürgschaft, Gültigkeit"],
+        ["audiatur et altera pars", "es möge auch der andere Teil gehört werden"],
+        ["beati possidentes", "Glücklich die Besitzenden"],
+        ["bella gerant alii, tu, felix, Austria, nube!", "Andere mögen Krieg führend, du, glückliches Österreich, heirate!"],
+        ["bellum defensivum", "Verteidigungskrieg"],
+        ["bellum gerere", "Krieg führen"],
+        ["bellum", "Krieg"],
+        ["beneficium", "(Rechts-)Wohltat, Vergünstigung"],
+        ["bilateralis/ unilateralis", "zweiseitig/ einseitig"],
+        ["bono fide", "gutgläubig, redlich"],
+        //["", ""],
     ]
+
+    statistics = {
+        // number of correctly answered questions
+        "correct": 0,
+        // number of wrongly answered questions
+        "wrong": 0,
+        // number of correct or wrong answers per word: {id: [correct, wrong]}
+        "per_word": {}
+    }
 
     console.log(`Loaded ${Object.keys(latin_data).length} words.`)
 
@@ -86,6 +156,7 @@
 
         // select one random question
         correct_answer = Math.floor(Math.random() * Object.keys(latin_data).length);
+        correct_answer = 1;
         answers.push(correct_answer);
 
         // select 3 random answers
@@ -133,17 +204,35 @@
     function set_list_item_as_wrong_answer(id) {
         document.getElementById(`${id}_container`).classList.add("bg-red-500");
     }
-</script>
 
-<script>
+    function update_statistics_answer(correct) {
+        if (correct) {
+            statistics["correct"] += 1;
+            if (Object.keys(statistics["per_word"]).includes(correct_answer.toString())) {
+                statistics["per_word"][correct_answer][0] += 1;
+            } else {
+                statistics["per_word"][correct_answer] = [1, 0];
+            }
+        } else {
+            statistics["wrong"] += 1;
+            if (Object.keys(statistics["per_word"]).includes(correct_answer.toString())) {
+                statistics["per_word"][correct_answer][1] += 1;
+            } else {
+                statistics["per_word"][correct_answer] = [0, 1];
+            }
+        }
+    }
+
     function check_answer() {
         let answer = parseInt(document.querySelector('input[name="list-radio"]:checked').id);
 
         if (answer === correct_answer) {
             set_list_item_as_correct_answer(answer);
+            update_statistics_answer(true);
         } else {
             set_list_item_as_correct_answer(correct_answer);
             set_list_item_as_wrong_answer(answer);
+            update_statistics_answer(false);
         }
 
         document.getElementById("check_answer_button").textContent = "Weiter";
@@ -162,9 +251,9 @@
 <div id="background_component" class="center absolute left-0 top-0 flex h-screen w-screen justify-center bg-blue-500">
     <div class="center m-auto flex justify-center">
         <div id="content_component" class="rounded-lg bg-indigo-400 bg-opacity-75 p-10 text-center">
-            <div id="welcome_text" class="text-5xl font-extrabold">Test</div>
-            <button class="px-4 py-2 font-semibold text-sm bg-sky-500 text-white rounded-none shadow-sm"
-                    onclick="display_new_exercise()">Start
+            <div id="welcome_text" class="text-5xl font-extrabold pb-3">Latein Test</div>
+            <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+                    onclick="display_new_exercise()">Training Modus
             </button>
         </div>
     </div>
