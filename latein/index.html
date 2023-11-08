@@ -36,7 +36,7 @@
         ["actio certae creditae pecuniae", "Klage des bestimmten anvertraueten Geldes"],
         ["actio conducti", "Klage des Mieters"],
         ["actio confessoria", "Klage des Servitutsberechtigten"],
-        ["actio contrario", "Wiederklage],Gegenklage des Nebenansrpuchsberechtigten"],
+        ["actio contrario", "Wiederklage,Gegenklage des Nebenansrpuchsberechtigten"],
         ["actio de dolo/ actio doli", "Schadenersatzklage"],
         ["actio directa", "Hauptklage, direkte Klage des Haupanspruchsberechtigten"],
         ["actio empti", "Klage (des Käufers) aus dem Kaufvertrag"],
@@ -139,7 +139,11 @@
         // number of wrongly answered questions
         "wrong": 0,
         // number of correct or wrong answers per word: {id: [correct, wrong]}
-        "per_word": {}
+        "per_word": {},
+        // list of words that were answered wrong
+        "previous_mistakes": [],
+        // queue of words that were answered wrong, and should appear again in the questions
+        "current_mistakes": [],
     }
 
     console.log(`Loaded ${Object.keys(latin_data).length} words.`)
@@ -149,13 +153,23 @@
     }
 
     var correct_answer = -1;
+    var currently_checking_previous_mistake = false;
 
     function get_new_exercise() {
         let questions = "";
         let answers = [];
+        let previously_wrong_warning = "";
 
-        // select one random question
-        correct_answer = Math.floor(Math.random() * Object.keys(latin_data).length);
+        if (Math.floor(Math.random() * 100) > 90 && statistics["current_mistakes"].length > 0) {
+            currently_checking_previous_mistake = true;
+            correct_answer = statistics["current_mistakes"].shift();
+            previously_wrong_warning = `<div class="absolute top-0 right-0 text-black text-xl font-extrabold mt-10 mr-6 p-2 rounded-lg bg-red-400">Vorheriger Fehler</div>`;
+        } else {
+            currently_checking_previous_mistake = false;
+
+            // select one random question
+            correct_answer = Math.floor(Math.random() * Object.keys(latin_data).length);
+        }
         answers.push(correct_answer);
 
         // select 3 random answers
@@ -180,7 +194,8 @@
 <div id="wrong_display" class="bg-red-400 font-extrabold text-xl rounded-lg">${statistics["wrong"].toString().padStart(3, "0")}</div>
 <div id="total_display" class="bg-gray-400 font-extrabold text-xl rounded-lg">${(statistics["correct"] + statistics["wrong"]).toString().padStart(3, "0")}</div>
 </div>
-<h3 class="mt-3 mb-6 font-extrabold text-gray-900 text-5xl">${latin_data[correct_answer][0]}</h3>
+${previously_wrong_warning}
+<h3 class="${currently_checking_previous_mistake ? 'mt-9': 'mt-3'} mb-7 font-extrabold text-gray-900 text-5xl">${latin_data[correct_answer][0]}</h3>
 <ul class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
     ${questions}
 </ul>
@@ -225,6 +240,8 @@
             } else {
                 statistics["per_word"][correct_answer] = [0, 1];
             }
+            statistics["previous_mistakes"].push(correct_answer);
+            statistics["current_mistakes"].push(correct_answer);
             document.getElementById("wrong_display").textContent = statistics["wrong"].toString().padStart(3, "0")
         }
         document.getElementById("total_display").textContent = (statistics["correct"] + statistics["wrong"]).toString().padStart(3, "0")
