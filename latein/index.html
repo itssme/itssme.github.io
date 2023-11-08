@@ -156,7 +156,6 @@
 
         // select one random question
         correct_answer = Math.floor(Math.random() * Object.keys(latin_data).length);
-        correct_answer = 1;
         answers.push(correct_answer);
 
         // select 3 random answers
@@ -176,7 +175,12 @@
         }
 
         template = `
-<h3 class="mb-6 font-extrabold text-gray-900 text-5xl">${latin_data[correct_answer][0]}</h3>
+<div class="absolute top-0 left-0 grid gap-6 grid-cols-3 w-full px-8">
+<div id="correct_display" class=" bg-green-400 font-extrabold text-xl rounded-lg">${statistics["correct"].toString().padStart(3, "0")}</div>
+<div id="wrong_display" class="bg-red-400 font-extrabold text-xl rounded-lg">${statistics["wrong"].toString().padStart(3, "0")}</div>
+<div id="total_display" class="bg-gray-400 font-extrabold text-xl rounded-lg">${(statistics["correct"] + statistics["wrong"]).toString().padStart(3, "0")}</div>
+</div>
+<h3 class="mt-3 mb-6 font-extrabold text-gray-900 text-5xl">${latin_data[correct_answer][0]}</h3>
 <ul class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
     ${questions}
 </ul>
@@ -213,6 +217,7 @@
             } else {
                 statistics["per_word"][correct_answer] = [1, 0];
             }
+            document.getElementById("correct_display").textContent = statistics["correct"].toString().padStart(3, "0")
         } else {
             statistics["wrong"] += 1;
             if (Object.keys(statistics["per_word"]).includes(correct_answer.toString())) {
@@ -220,7 +225,9 @@
             } else {
                 statistics["per_word"][correct_answer] = [0, 1];
             }
+            document.getElementById("wrong_display").textContent = statistics["wrong"].toString().padStart(3, "0")
         }
+        document.getElementById("total_display").textContent = (statistics["correct"] + statistics["wrong"]).toString().padStart(3, "0")
     }
 
     function check_answer() {
@@ -249,7 +256,7 @@
 </script>
 
 <div id="background_component" class="center absolute left-0 top-0 flex h-screen w-screen justify-center bg-blue-500">
-    <div class="center m-auto flex justify-center">
+    <div class="center m-auto flex justify-center relative p-4">
         <div id="content_component" class="rounded-lg bg-indigo-400 bg-opacity-75 p-10 text-center">
             <div id="welcome_text" class="text-5xl font-extrabold pb-3">Latein Test</div>
             <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
