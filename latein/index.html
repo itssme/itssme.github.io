@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body onload="display_main_menu()">
 <script>
     latin_data = [
         ["a posteriori", "im Nachhinein"],
@@ -18,7 +18,7 @@
         ["abolitio", "Aufhebung"],
         ["abrogatio", "Abschaffung"],
         ["absolutio", "Freisprechung"],
-        ["absolutus sententia iudicis praesumitur innocens", "wer durch Gerichtsurteil freigesprochen worden ist] gilt als unschuldig"],
+        ["absolutus sententia iudicis praesumitur innocens", "wer durch Gerichtsurteil freigesprochen worden ist, gilt als unschuldig"],
         ["abusus non tollit usum", "Missbrauch hebt ein Gebrauchsrecht nicht auf"],
         ["abusus", "Missbrauch"],
         ["acceptilatio", "förmliche Bestätigung der Erfüllung einer Stipulationsschuld"],
@@ -146,10 +146,108 @@
         "current_mistakes": [],
     }
 
+    question_lower_bound = 0;
+    question_upper_bound = latin_data.length - 1;
+
     console.log(`Loaded ${Object.keys(latin_data).length} words.`)
 
     function display_new_exercise() {
         document.getElementById("content_component").innerHTML = get_new_exercise();
+    }
+
+    function display_new_vocals() {
+        // select one random question out of a range of new vocals
+    }
+
+    function display_settings() {
+        document.getElementById("content_component").innerHTML = `
+<div class="text-5xl font-extrabold pb-3">Einstellungen</div>
+<div class="flex flex-col">
+    <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+        onclick="display_vocal_list('display_settings', true)">Vokabel Liste
+    </button>
+    <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+        onclick="display_main_menu()">Zurück
+    </button>
+</div>`;
+    }
+
+    function display_vocal_list(previous_function, lower_upper_bound_changeable) {
+        let word_list = `
+            <div class="text-4xl font-extrabold text-center">ID</div>
+            <div class="text-4xl font-extrabold text-start">Latein</div>
+            <div class="text-4xl font-extrabold text-start">Deutsch</div>
+            <div class="my-2 h-1 w-full bg-black col-span-3"></div>`;
+
+        for (let i = 0; i < latin_data.length; i++) {
+            let word_template = `
+            <div class="text-2xl font-extrabold text-center">${i}</div>
+            <div class="text-2xl font-extrabold text-start">${latin_data[i][0]}</div>
+            <div class="text-2xl font-extrabold text-start">${latin_data[i][1]}</div>
+            <div class="my-2 h-1 w-full bg-black col-span-3"></div>`
+            word_list += word_template;
+        }
+
+        let upper_bound_input = ``;
+        let lower_bound_input = ``;
+
+        if (lower_upper_bound_changeable) {
+            upper_bound_input = `
+<div class="bg-white border border-gray-200 rounded-lg mx-6" data-hs-input-number>
+  <div class="w-full flex justify-between items-center gap-x-1">
+    <div class="grow py-2 px-3">
+      <span class="block text-xs text-gray-500">
+        Von hier weg Fragen
+      </span>
+      <input id="lower_bound_input" class="w-full p-0 bg-transparent border-0 text-gray-800 focus:ring-0" type="text" value="${question_lower_bound}" data-hs-input-number-input onchange="question_lower_bound = parseInt(document.getElementById('lower_bound_input').value)">
+    </div>
+    <div class="flex flex-col -gap-y-px divide-y divide-gray-200 border-s border-gray-200">
+      <button type="button" class="w-7 h-7 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-se-lg bg-gray-50 text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" data-hs-input-number-decrement>
+        <svg class="flex-shrink-0 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+      </button>
+      <button type="button" class="w-7 h-7 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-ee-lg bg-gray-50 text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" data-hs-input-number-increment>
+        <svg class="flex-shrink-0 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      </button>
+    </div>
+  </div>
+</div>`;
+            lower_bound_input = `
+<div class="bg-white border border-gray-200 rounded-lg mx-6" data-hs-input-number>
+  <div class="w-full flex justify-between items-center gap-x-1">
+    <div class="grow py-2 px-3">
+      <span class="block text-xs text-gray-500">
+        Bis hier hin
+      </span>
+      <input id="upper_bound_input" class="w-full p-0 bg-transparent border-0 text-gray-800 focus:ring-0" type="text" value="${question_upper_bound}" data-hs-input-number-input onchange="question_upper_bound = parseInt(document.getElementById('upper_bound_input').value)">
+    </div>
+    <div class="flex flex-col -gap-y-px divide-y divide-gray-200 border-s border-gray-200">
+      <button type="button" class="w-7 h-7 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-se-lg bg-gray-50 text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" data-hs-input-number-decrement>
+        <svg class="flex-shrink-0 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+      </button>
+      <button type="button" class="w-7 h-7 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-ee-lg bg-gray-50 text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" data-hs-input-number-increment>
+        <svg class="flex-shrink-0 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      </button>
+    </div>
+  </div>
+</div>`;
+        }
+
+        document.getElementById("content_component").innerHTML = `
+<div class="flex flex-col" style="max-height: 80vh;">
+    <div class="text-5xl font-extrabold pb-3">Vokabel Liste</div>
+    <div class="flex flex-col">
+        <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+            onclick="${previous_function}()">Zurück
+        </button>
+        <div class="flex flex-row justify-center pt-6">
+        ${upper_bound_input}
+        ${lower_bound_input}
+        </div>
+    </div>
+    <div class="grid grid-cols-3 justify-items-start overflow-y-auto mt-5">
+        ${word_list}
+    </div>
+</div>`;
     }
 
     var correct_answer = -1;
@@ -168,13 +266,13 @@
             currently_checking_previous_mistake = false;
 
             // select one random question
-            correct_answer = Math.floor(Math.random() * Object.keys(latin_data).length);
+            correct_answer = get_random_question();
         }
         answers.push(correct_answer);
 
         // select 3 random answers
         while (answers.length < 4) {
-            let random_answer = Math.floor(Math.random() * Object.keys(latin_data).length);
+            let random_answer = get_random_question();
             if (!answers.includes(random_answer)) {
                 answers.push(random_answer);
             }
@@ -195,13 +293,18 @@
 <div id="total_display" class="bg-gray-400 font-extrabold text-xl rounded-lg">${(statistics["correct"] + statistics["wrong"]).toString().padStart(3, "0")}</div>
 </div>
 ${previously_wrong_warning}
-<h3 class="${currently_checking_previous_mistake ? 'mt-9': 'mt-3'} mb-7 font-extrabold text-gray-900 text-5xl">${latin_data[correct_answer][0]}</h3>
+<h3 class="${currently_checking_previous_mistake ? 'mt-9' : 'mt-3'} mb-7 font-extrabold text-gray-900 text-5xl">${latin_data[correct_answer][0]}</h3>
 <ul class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
     ${questions}
 </ul>
-<button id="check_answer_button" class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
-    onclick="check_answer()">Bestätigen
-</button>
+<div class="flex flex-col justify-items-center">
+    <button id="check_answer_button" class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+        onclick="check_answer()">Bestätigen
+    </button>
+    <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+        onclick="display_main_menu()">Zurück
+    </button>
+</div>
 `
         return template;
     }
@@ -214,6 +317,10 @@ ${previously_wrong_warning}
         <label for="${id}" class="w-full py-3 ml-2 text-lg font-semibold text-gray-900">${latin_data[id][1]}</label>
      </div>
 </li>`
+    }
+
+    function get_random_question() {
+        return Math.floor(Math.random() * (question_upper_bound - question_lower_bound + 1)) + question_lower_bound;
     }
 
     function set_list_item_as_correct_answer(id) {
@@ -275,13 +382,27 @@ ${previously_wrong_warning}
 <div id="background_component" class="center absolute left-0 top-0 flex h-screen w-screen justify-center bg-blue-500">
     <div class="center m-auto flex justify-center relative p-4">
         <div id="content_component" class="rounded-lg bg-indigo-400 bg-opacity-75 p-10 text-center">
-            <div id="welcome_text" class="text-5xl font-extrabold pb-3">Latein Test</div>
-            <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
-                    onclick="display_new_exercise()">Training Modus
-            </button>
         </div>
     </div>
 </div>
+
+<script>
+    function display_main_menu() {
+        document.getElementById("content_component").innerHTML = `
+<div id="welcome_text" class="text-5xl font-extrabold pb-3">Latein Test</div>
+<div class="flex flex-col">
+    <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+        onclick="display_new_exercise()">Training Modus
+    </button>
+    <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+        onclick="display_new_vocals()">Neue Vokabel
+    </button>
+    <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+        onclick="display_settings()">Einstellungen
+    </button>
+</div>`;
+    }
+</script>
 
 <style>
     .bg-animation {
@@ -311,6 +432,11 @@ ${previously_wrong_warning}
     function be_right_back_animateBackground() {
         const component = document.getElementById('background_component');
         component.classList.add('bg-animation');
+    }
+
+    function be_right_back_animateBackground_remove() {
+        const component = document.getElementById('background_component');
+        component.classList.remove('bg-animation');
     }
 
     be_right_back_animateBackground();
