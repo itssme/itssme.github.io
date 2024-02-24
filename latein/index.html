@@ -1109,6 +1109,7 @@
 
     question_lower_bound = 0;
     question_upper_bound = latin_data.length - 1;
+    question_latin_to_german = true;
 
     console.log(`Loaded ${Object.keys(latin_data).length} words.`)
 
@@ -1128,6 +1129,9 @@
         onclick="display_vocal_list('display_settings', true)">Vokabel Liste
     </button>
     <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+        onclick="display_german_switch('display_settings')">Deutsch / Latein
+    </button>
+    <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
         onclick="display_main_menu()">Zurück
     </button>
 </div>`;
@@ -1135,23 +1139,29 @@
 
     function display_vocal_list(previous_function, lower_upper_bound_changeable) {
         let word_list = `
-            <div class="text-4xl font-extrabold text-center">ID</div>
-            <div class="text-4xl font-extrabold text-start">Latein</div>
-            <div class="text-4xl font-extrabold text-start">Deutsch</div>
-            <div class="my-2 h-1 w-full bg-black col-span-3"></div>`;
+            <div class="col-span-1 text-2xl md:text-4xl font-extrabold text-center">ID</div>
+            <div class="col-span-4 text-2xl md:text-4xl font-extrabold text-start">Latein</div>
+            <div class="col-span-5 text-2xl md:text-4xl font-extrabold text-start">Deutsch</div>
+            <div class="col-span-10 my-2 h-1 w-full bg-black"></div>`;
 
-        for (let i = 0; i < latin_data.length; i++) {
+        let latin_word_list = latin_data;
+        if (!question_latin_to_german) {
+            latin_word_list = switch_german_latin_map_func(latin_word_list);
+        }
+
+        for (let i = 0; i < latin_word_list.length; i++) {
             let word_template = `
-            <div class="text-2xl font-extrabold text-center">${i}</div>
-            <div class="text-2xl font-extrabold text-start">${latin_data[i][0]}</div>
-            <div class="text-2xl font-extrabold text-start">${latin_data[i][1]}</div>
-            <div class="my-2 h-1 w-full bg-black col-span-3"></div>`
+            <div class="col-span-1 text-sm md:text-2xl font-extrabold text-start">${i}</div>
+            <div class="col-span-4 text-sm md:text-2xl font-extrabold text-start">${latin_word_list[i][0]}</div>
+            <div class="col-span-5 text-sm md:text-2xl font-extrabold text-start">${latin_word_list[i][1]}</div>
+            <div class="col-span-10 my-2 h-1 w-full bg-black"></div>`
             word_list += word_template;
         }
 
         let upper_bound_input = ``;
         let lower_bound_input = ``;
 
+        // TODO: current bug: if the user changes the lower and upper bound so that less than 4 words are available, the exercise will not work
         if (lower_upper_bound_changeable) {
             upper_bound_input = `
 <div class="bg-white border border-gray-200 rounded-lg mx-6" data-hs-input-number>
@@ -1205,10 +1215,39 @@
         ${lower_bound_input}
         </div>
     </div>
-    <div class="grid grid-cols-3 justify-items-start overflow-y-auto mt-5">
+    <div class="grid grid-cols-10 justify-items-start overflow-y-auto mt-5">
         ${word_list}
     </div>
 </div>`;
+    }
+
+    function display_german_switch(previous_function) {
+        translation = (question_latin_to_german ? "Latein" : "Deutsch") + " -> " + (question_latin_to_german ? "Deutsch" : "Latein");
+
+        document.getElementById("content_component").innerHTML = `
+<div class="flex flex-col">
+    <div class="text-5xl font-extrabold pb-3">${translation}</div>
+    <div class="flex flex-col">
+        <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+            onclick="switch_german_latin(); display_german_switch('${previous_function}')">Umkehren
+        </button>
+        <button class="px-4 py-2 mt-6 font-extrabold text-lg bg-sky-500 text-black rounded-none shadow-sm"
+            onclick="${previous_function}()">Zurück
+        </button>
+    </div>
+</div>`;
+    }
+
+    function switch_german_latin() {
+        question_latin_to_german = !question_latin_to_german;
+
+        latin_data = switch_german_latin_map_func(latin_data);
+    }
+
+    function switch_german_latin_map_func(map) {
+        return map.map(function (word) {
+            return [word[1], word[0]];
+        });
     }
 
     var correct_answer = -1;
@@ -1219,7 +1258,7 @@
         let answers = [];
         let previously_wrong_warning = "";
 
-        if (Math.floor(Math.random() * 100) > 90 && statistics["current_mistakes"].length > 0) {
+        if (statistics["current_mistakes"].length > 0 && Math.floor(Math.random() * 100) > 100 - (statistics["current_mistakes"].length * 10)) {
             currently_checking_previous_mistake = true;
             correct_answer = statistics["current_mistakes"].shift();
             previously_wrong_warning = `<div class="absolute top-0 right-0 text-black text-xl font-extrabold mt-10 mr-6 p-2 rounded-lg bg-red-400">Vorheriger Fehler</div>`;
@@ -1342,7 +1381,7 @@ ${previously_wrong_warning}
 
 <div id="background_component" class="center absolute left-0 top-0 flex h-screen w-screen justify-center bg-blue-500">
     <div class="center m-auto flex justify-center relative p-4">
-        <div id="content_component" class="rounded-lg bg-indigo-400 bg-opacity-75 p-10 text-center">
+        <div id="content_component" class="rounded-lg bg-indigo-400 bg-opacity-75 p-4 md:p-10 text-center">
         </div>
     </div>
 </div>
