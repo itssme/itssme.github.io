@@ -1,6 +1,6 @@
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -1151,9 +1151,9 @@
 
     function display_vocal_list(previous_function, lower_upper_bound_changeable) {
         let word_list = `
-            <div class="col-span-1 text-2xl md:text-4xl font-extrabold text-center">ID</div>
-            <div class="col-span-4 text-2xl md:text-4xl font-extrabold text-start">Latein</div>
-            <div class="col-span-5 text-2xl md:text-4xl font-extrabold text-start">Deutsch</div>
+            <div class="col-span-1 text-2xl font-extrabold text-center">ID</div>
+            <div class="col-span-4 text-2xl font-extrabold text-start">Latein</div>
+            <div class="col-span-5 text-2xl font-extrabold text-start">Deutsch</div>
             <div class="col-span-10 my-2 h-1 w-full bg-black"></div>`;
 
         let latin_word_list = latin_data;
@@ -1163,9 +1163,9 @@
 
         for (let i = 0; i < latin_word_list.length; i++) {
             let word_template = `
-            <div class="col-span-1 text-sm md:text-2xl font-extrabold text-start">${i}</div>
-            <div class="col-span-4 text-sm md:text-2xl font-extrabold text-start">${latin_word_list[i][0]}</div>
-            <div class="col-span-5 text-sm md:text-2xl font-extrabold text-start">${latin_word_list[i][1]}</div>
+            <div class="col-span-1 text-sm font-extrabold text-start">${i}</div>
+            <div class="col-span-4 text-sm font-extrabold text-start">${latin_word_list[i][0]}</div>
+            <div class="col-span-5 text-sm font-extrabold text-start">${latin_word_list[i][1]}</div>
             <div class="col-span-10 my-2 h-1 w-full bg-black"></div>`
             word_list += word_template;
         }
@@ -1408,7 +1408,7 @@ ${previously_wrong_warning}
 
 <div id="background_component" class="center absolute left-0 top-0 flex h-screen w-screen justify-center bg-blue-500">
     <div class="center m-auto flex justify-center relative p-4">
-        <div id="content_component" class="rounded-lg bg-indigo-400 bg-opacity-75 p-4 md:p-10 text-center">
+        <div id="content_component" class="rounded-lg bg-indigo-400 bg-opacity-75 p-4 lg:p-10 m-2 text-center">
         </div>
     </div>
 </div>
