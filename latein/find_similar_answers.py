@@ -981,7 +981,7 @@ latin_data = [
     ["revisio", "streitverfangene Sache"],
     ["revocatio mandati", "Widerrruf der Vollmacht"],
     ["revocatio testamenti", "Widerruf des Testaments"],
-    ["revocatio Widerruf", ""],
+    ["revocatio", "Widerruf"],
     ["salarium", "Sold, Diät, Honorar"],
     ["satisdatio", "Sicherheitsleistung durch den Bürger"],
     ["scelus", "Verbrechen, Untat"],
@@ -1148,28 +1148,24 @@ def find_similar_answers(vocal_index) -> List[str]:
     question, answer = latin_data[vocal_index]
 
     similar_candidates = []
-    latin_data_preprocessed = [i for i in range(len(latin_data)) if
-                               len(question) * 0.75 < len(latin_data[i][0]) < len(question) * 1.25]
+    latin_data_preprocessed = [latin_data[i][1] for i in range(len(latin_data)) if
+                               len(answer) * 0.4 < len(latin_data[i][1]) < len(answer) * 1.6 and i != vocal_index]
 
     embedding_question = model.encode(answer, convert_to_tensor=True)
-    for i in tqdm(latin_data_preprocessed, total=len(latin_data_preprocessed),
-                  desc=f"Finding similar answers for '{question}', correct answer: '{answer}'", leave=False,
-                  position=1):
-        if i == vocal_index:
-            continue
 
-        similar_candidate = latin_data[i][1]
-        embedding_candidate = model.encode(similar_candidate, convert_to_tensor=True)
+    embedding_candidate = model.encode(latin_data_preprocessed, convert_to_tensor=True)
+    # Compute cosine similarity between text pairs
+    similarity = util.pytorch_cos_sim(embedding_question, embedding_candidate).tolist()[0]
 
-        # Compute cosine similarity between text pairs
-        similarity = util.pytorch_cos_sim(embedding_question, embedding_candidate).item()
-        similar_candidates.append((i, similarity))
+    for i in range(len(similarity)):
+        similar_candidates.append((i, similarity[i]))
 
+    #similar_candidates.append((vocal_index, 1.0))
     similar_candidates.sort(key=lambda x: x[1], reverse=True)
 
     # Print the similarity scores
     for i in range(0, min(len(similar_candidates), 10)):
-        similar_answers.append(latin_data[similar_candidates[i][0]][1])
+        similar_answers.append(latin_data_preprocessed[similar_candidates[i][0]])
         # print(f"{similar_candidates[i][1]:1.3f} {latin_data[similar_candidates[i][0]][1]}")
 
     return similar_answers
@@ -1190,7 +1186,7 @@ def calculate_similarity(filename):
         print(f"Loaded {len(result)} similar answers from {filename}")
 
     try:
-        for i in tqdm(range(len(result), len(latin_data), 1), desc="Finding similar answers",
+        for i in tqdm(range(len(result), len(latin_data), 1), desc=f"Finding similar answers, {filename}",
                       position=0):
             result.append([i, find_similar_answers(i)])
     except KeyboardInterrupt:
