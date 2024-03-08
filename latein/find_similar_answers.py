@@ -1,6 +1,8 @@
 import json
 import os.path
 from typing import List
+
+import numpy as np
 from tqdm import tqdm
 
 from sentence_transformers import SentenceTransformer, util
@@ -1142,31 +1144,31 @@ latin_data = [
 ]
 
 
-def find_similar_answers(vocal_index) -> List[str]:
+def find_similar_answers(vocal_index) -> List[int]:
     similar_answers = []
 
     question, answer = latin_data[vocal_index]
 
     similar_candidates = []
-    latin_data_preprocessed = [latin_data[i][1] for i in range(len(latin_data)) if
-                               len(answer) * 0.4 < len(latin_data[i][1]) < len(answer) * 1.6 and i != vocal_index]
+    latin_data_preprocessed = np.array([[i, latin_data[i][1]] for i in range(len(latin_data)) if
+                                        len(answer) * 0.4 < len(latin_data[i][1]) < len(
+                                            answer) * 1.6 and i != vocal_index])
 
     embedding_question = model.encode(answer, convert_to_tensor=True)
 
-    embedding_candidate = model.encode(latin_data_preprocessed, convert_to_tensor=True)
+    embedding_candidate = model.encode(latin_data_preprocessed[:, 1].tolist(), convert_to_tensor=True)
     # Compute cosine similarity between text pairs
     similarity = util.pytorch_cos_sim(embedding_question, embedding_candidate).tolist()[0]
 
     for i in range(len(similarity)):
         similar_candidates.append((i, similarity[i]))
 
-    #similar_candidates.append((vocal_index, 1.0))
+    # similar_candidates.append((vocal_index, 1.0))
     similar_candidates.sort(key=lambda x: x[1], reverse=True)
 
     # Print the similarity scores
     for i in range(0, min(len(similar_candidates), 10)):
-        similar_answers.append(latin_data_preprocessed[similar_candidates[i][0]])
-        # print(f"{similar_candidates[i][1]:1.3f} {latin_data[similar_candidates[i][0]][1]}")
+        similar_answers.append(int(latin_data_preprocessed[similar_candidates[i][0]][0]))
 
     return similar_answers
 

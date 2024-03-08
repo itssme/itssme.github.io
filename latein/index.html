@@ -1110,6 +1110,19 @@
     question_upper_bound = latin_data.length - 1;
     question_latin_to_german = true;
 
+    german_to_latin_hard_questions = [];
+    latin_to_german_hard_questions = [];
+
+    // load german to latin hard questions
+    fetch('german_to_latin.json')
+        .then(response => response.json())
+        .then(data => german_to_latin_hard_questions = data)
+
+    // load latin to german hard questions
+    fetch('german_to_latin.json')
+        .then(response => response.json())
+        .then(data => latin_to_german_hard_questions = data)
+
     console.log(`Loaded ${Object.keys(latin_data).length} words.`)
 
     function display_new_exercise() {
@@ -1271,7 +1284,22 @@
 
         // select 3 random answers
         while (answers.length < 4) {
-            let random_answer = get_random_question();
+            // easy
+            //let random_answer = get_random_question();
+            //if (!answers.includes(random_answer)) {
+            //    answers.push(random_answer);
+            //}
+
+            // hard
+            let random_answer = correct_answer;
+            let questions = german_to_latin_hard_questions;
+            if (question_latin_to_german) {
+                questions = latin_to_german_hard_questions;
+            }
+
+            random_answer = Math.floor(Math.random() * questions.at(correct_answer)[1].length);
+            random_answer = questions.at(correct_answer)[1][random_answer];
+
             if (!answers.includes(random_answer)) {
                 answers.push(random_answer);
             }
