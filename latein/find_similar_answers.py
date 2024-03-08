@@ -1,3 +1,5 @@
+import json
+import os.path
 from typing import List
 from tqdm import tqdm
 
@@ -1149,15 +1151,14 @@ def find_similar_answers(vocal_index) -> List[str]:
     latin_data_preprocessed = [i for i in range(len(latin_data)) if
                                len(question) * 0.75 < len(latin_data[i][0]) < len(question) * 1.25]
 
+    embedding_question = model.encode(answer, convert_to_tensor=True)
     for i in tqdm(latin_data_preprocessed, total=len(latin_data_preprocessed),
-                  desc=f"Finding similar answers for '{question}', correct answer: '{answer}'"):
+                  desc=f"Finding similar answers for '{question}', correct answer: '{answer}'", leave=False,
+                  position=1):
         if i == vocal_index:
             continue
 
         similar_candidate = latin_data[i][1]
-
-        # Compute embeddings for each text
-        embedding_question = model.encode(answer, convert_to_tensor=True)
         embedding_candidate = model.encode(similar_candidate, convert_to_tensor=True)
 
         # Compute cosine similarity between text pairs
@@ -1167,9 +1168,9 @@ def find_similar_answers(vocal_index) -> List[str]:
     similar_candidates.sort(key=lambda x: x[1], reverse=True)
 
     # Print the similarity scores
-    for i in range(0, 10):
+    for i in range(0, min(len(similar_candidates), 10)):
         similar_answers.append(latin_data[similar_candidates[i][0]][1])
-        print(f"{similar_candidates[i][1]:1.3f} {latin_data[similar_candidates[i][0]][1]}")
+        # print(f"{similar_candidates[i][1]:1.3f} {latin_data[similar_candidates[i][0]][1]}")
 
     return similar_answers
 
@@ -1179,9 +1180,30 @@ def switch_latin_german():
     latin_data = [(b, a) for a, b in latin_data]
 
 
+def calculate_similarity(filename):
+    result = []
+
+    if os.path.exists(filename):
+        with open(filename, "r") as file:
+            result = json.load(file)
+
+        print(f"Loaded {len(result)} similar answers from {filename}")
+
+    try:
+        for i in tqdm(range(len(result), len(latin_data), 1), desc="Finding similar answers",
+                      position=0):
+            result.append([i, find_similar_answers(i)])
+    except KeyboardInterrupt:
+        print(f"Interrupted by user, saving data to {filename}")
+
+    with open(filename, "w") as file:
+        json.dump(result, file, indent=4, ensure_ascii=False)
+
+
 def main():
+    calculate_similarity("latin_to_german.json")
     switch_latin_german()
-    find_similar_answers(19)
+    calculate_similarity("german_to_latin.json")
 
 
 if __name__ == '__main__':
