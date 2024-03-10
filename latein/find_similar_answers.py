@@ -1063,7 +1063,7 @@ latin_data = [
     ["traditio bervi manu",
      "Besitzübergabe kurzer Hand (Form des Besitzerwerbs ohne körperliche Übergabe durch bloße Erklärung)"],
     ["traditio longa manu", "Übergabe durch die lange Hand (körperliche Übergabe)"],
-    ["traditio per chartam", "Übergabe in den Besitz, Besitzübertragung, Überlieferung"],
+    ["traditio per chartam", "Übergabe durch eine Urkunde, an welcher das Recht an der Sache verbrieft ist"],
     ["traditio", "Übergabe in den Besitz, Besitzübertragung, Überlieferung"],
     ["transactio", "Vergleich, Abmachung"],
     ["tres faciunt collegium", "drei bilden einen Verein"],
