@@ -1123,7 +1123,7 @@ latin_data = [
     ["verum tacere et falsum asserere paria sunt",
      "die Wahrheit verschweigen und etwas Falsches versichern ist das Gleiche"],
     ["vi, clam, precario",
-     "vi = durch/ mit Gewalt, gewaltsam, clam = heimlich, precario = 'bittweise', aufgrund einer Bittleihe"],
+     "durch/mit Gewalt, gewaltsam / heimlich / 'bittweise', aufgrund einer Bittleihe"],
     ["via", "Straße, Fahrrecht"],
     ["vice versa", "umgekehrt"],
     ["vidaet = videatur", "es möge gesehen werden"],
