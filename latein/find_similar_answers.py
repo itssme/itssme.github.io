@@ -282,7 +282,7 @@ latin_data = [
     ["debitor", "Schuldner"],
     ["debitum", "Schuld, Verpflichtung"],
     ["declaratio", "Kundmachung, Offenbarung"],
-    ["debitio", "Auslieferung (an den Feind)"],
+    ["deditio", "Auslieferung (an den Feind)"],
     ["defensio", "Verteidigung (vor Gericht)"],
     ["defensor", "Verteidiger"],
     ["deleatur", "es möge vernichtet, getilgt, weggestrichen werden"],
