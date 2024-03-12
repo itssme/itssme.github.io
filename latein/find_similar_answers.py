@@ -707,7 +707,7 @@ latin_data = [
     ["neglegentia crassa", "grobe Fahrlässigkeit"],
     ["negligentia", "Fahrlässigkeit, Nachlässigkeit"],
     ["negotiorum gestio", "Geschäftsführung ohne Auftrag 'Führung von (fremden) Geschäften'"],
-    ["negotium gestor", "Geschäftsführung ohne Auftrag"],
+    ["negotium gestor", "Geschäftsführer ohne Auftrag"],
     ["negotium bilaterale", "zweiseitiges Rechtsgeschäft"],
     ["negotium inter vivos", "Rechtsgeschäft unter Lebenden"],
     ["negotium mortis causa", "Rechtsgeschäft von Todes wegen"],
